@@ -73,6 +73,67 @@ export default function App() {
     }
   }, [typingIndex, typingStep]);
 
+  // Vanta.js initialization
+  useEffect(() => {
+    let vantaEffect;
+    
+    const initVanta = () => {
+      if (window.VANTA && window.THREE) {
+        vantaEffect = window.VANTA.BIRDS({
+          el: "#vanta-bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00,
+          color1: 0x3b82f6, // Blue
+          color2: 0x8b5cf6, // Purple  
+          colorMode: "lerpGradient",
+          birdSize: 0.80,
+          wingSpan: 20.00,
+          speedLimit: 6.00,
+          separation: 25.00,
+          alignment: 18.00,
+          cohesion: 30.00,
+          quantity: 3.00,
+          backgroundAlpha: 0.0
+        });
+      } else {
+        // Retry after a short delay if libraries aren't loaded yet
+        setTimeout(initVanta, 100);
+      }
+    };
+
+    // Load Three.js
+    if (!window.THREE) {
+      const threeScript = document.createElement('script');
+      threeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js';
+      threeScript.onload = () => {
+        // Load Vanta Birds
+        const vantaScript = document.createElement('script');
+        vantaScript.src = 'https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js';
+        vantaScript.onload = initVanta;
+        document.head.appendChild(vantaScript);
+      };
+      document.head.appendChild(threeScript);
+    } else if (!window.VANTA) {
+      // Three.js is loaded, just load Vanta
+      const vantaScript = document.createElement('script');
+      vantaScript.src = 'https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js';
+      vantaScript.onload = initVanta;
+      document.head.appendChild(vantaScript);
+    } else {
+      // Both are loaded
+      initVanta();
+    }
+
+    return () => {
+      if (vantaEffect) vantaEffect.destroy();
+    };
+  }, []);
+
   // Feature carousel auto-rotation
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,49 +145,16 @@ export default function App() {
   const parallaxOffset = scrollY * 0.5;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div 
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full mix-blend-soft-light filter blur-3xl opacity-70 animate-pulse"
-          style={{ 
-            transform: `translate(${parallaxOffset * 0.1}px, ${parallaxOffset * 0.2}px)`,
-            animation: 'float 8s ease-in-out infinite'
-          }}
-        />
-        <div 
-          className="absolute top-2/3 left-1/3 w-80 h-80 bg-purple-500/30 rounded-full mix-blend-soft-light filter blur-3xl opacity-50"
-          style={{ 
-            transform: `translate(${-parallaxOffset * 0.15}px, ${-parallaxOffset * 0.1}px)`,
-            animation: 'float 10s ease-in-out infinite 1s'
-          }}
-        />
-        <div 
-          className="absolute top-1/3 right-1/4 w-72 h-72 bg-pink-500/20 rounded-full mix-blend-soft-light filter blur-3xl opacity-60"
-          style={{ 
-            transform: `translate(${parallaxOffset * 0.05}px, ${-parallaxOffset * 0.15}px)`,
-            animation: 'float 12s ease-in-out infinite 2s'
-          }}
-        />
-        
-        {/* Animated grid background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-        
-        {/* Sparkles */}
-        <div className="absolute top-1/4 right-1/4 animate-ping">
-          <Sparkles className="w-5 h-5 text-yellow-300" />
-        </div>
-        <div className="absolute bottom-1/3 left-1/4 animate-ping delay-1000">
-          <Sparkles className="w-4 h-4 text-blue-300" />
-        </div>
-        <div className="absolute top-2/3 right-1/3 animate-ping delay-2000">
-          <Sparkles className="w-3 h-3 text-purple-300" />
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-900 text-white overflow-x-hidden">
+      {/* Vanta.js Birds Background */}
+      <div id="vanta-bg" className="fixed inset-0 z-0"></div>
+      
+      {/* Overlay for better text readability */}
+      <div className="fixed inset-0 bg-slate-900/40 z-0"></div>
 
       {/* Navbar */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrollY > 50 ? 'bg-black/30 backdrop-blur-xl shadow-2xl border-b border-white/10' : 'bg-transparent'
+        scrollY > 50 ? 'bg-black/60 backdrop-blur-xl shadow-2xl border-b border-white/20' : 'bg-black/40 backdrop-blur-md'
       }`}>
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <div className="flex items-center">
@@ -144,8 +172,8 @@ export default function App() {
             <a href="#contact" className="hover:text-blue-300 transition-all duration-300 hover:scale-105">Contact</a>
           </nav>
           <button className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative px-6 py-2 bg-black/70 ring-1 ring-gray-900/5 rounded-lg leading-none flex items-center">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-90 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative px-6 py-2 bg-black/90 ring-1 ring-gray-900/5 rounded-lg leading-none flex items-center backdrop-blur-md">
               <span className="text-blue-100 group-hover:text-white transition-colors duration-200">Login</span>
               <ArrowRight className="w-4 h-4 ml-2 text-blue-300 group-hover:translate-x-1 transition-transform duration-200" />
             </div>
@@ -154,14 +182,14 @@ export default function App() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6">
+      <section className="relative pt-32 pb-20 px-6 z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Side - Intro Content */}
           <div 
             className="transform transition-all duration-1000 ease-out z-10"
             style={{ transform: `translateY(${parallaxOffset * 0.1}px)` }}
           >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Zap className="w-5 h-5 text-yellow-400 mr-2 animate-pulse" />
               <span className="text-blue-300">AI-Powered Career Platform</span>
               <div className="ml-2 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
@@ -178,48 +206,30 @@ export default function App() {
             </p>
             <div className="flex gap-4 flex-wrap">
               <button className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-                <div className="relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg leading-none flex items-center">
-                  <span className="text-white group-hover:text-gray-100 transition-colors duration-200">Get Started Free</span>
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-90 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                <div className="relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg leading-none flex items-center backdrop-blur-sm">
+                  <span className="text-white group-hover:text-gray-100 transition-colors duration-200 font-semibold">Get Started Free</span>
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                 </div>
               </button>
               
               <button className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative px-8 py-4 bg-black/70 ring-1 ring-white/10 rounded-lg leading-none flex items-center">
-                  <span className="text-blue-100 group-hover:text-white transition-colors duration-200">Watch Demo</span>
+                <div className="relative px-8 py-4 bg-black/80 ring-1 ring-white/20 rounded-lg leading-none flex items-center backdrop-blur-md">
+                  <span className="text-blue-100 group-hover:text-white transition-colors duration-200 font-medium">Watch Demo</span>
                   <ChevronRight className="w-5 h-5 ml-2 text-blue-300 group-hover:translate-x-1 transition-transform duration-200" />
                 </div>
               </button>
-            </div>
-            
-            <div className="flex items-center mt-10 space-x-6">
-              <div className="flex -space-x-4">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="w-12 h-12 rounded-full border-2 border-slate-900 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-                ))}
-              </div>
-              <div className="text-gray-300">
-                <div className="flex items-center">
-                  <Star className="w-5 h-5 text-yellow-400 fill-current mr-1" />
-                  <Star className="w-5 h-5 text-yellow-400 fill-current mr-1" />
-                  <Star className="w-5 h-5 text-yellow-400 fill-current mr-1" />
-                  <Star className="w-5 h-5 text-yellow-400 fill-current mr-1" />
-                  <Star className="w-5 h-5 text-yellow-400 fill-current mr-2" />
-                  <span>4.9/5 from 2k+ users</span>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Right Side - Resume Builder with Typewriter Effect */}
           <div className="relative">
-            <div className="bg-black/20 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 border border-white/10 transform hover:scale-[1.02] transition-transform duration-500 relative overflow-hidden">
+            <div className="bg-black/40 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 border border-white/20 transform hover:scale-[1.02] transition-transform duration-500 relative overflow-hidden">
               {/* Animated border */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-75 blur"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-90 blur"></div>
               
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
               
               <div className="relative z-10">
                 <div className="flex items-center mb-4">
@@ -234,7 +244,7 @@ export default function App() {
                   <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
                 </div>
                 
-                <div className="bg-slate-900/60 p-5 rounded-xl h-96 overflow-hidden font-mono border border-white/5">
+                <div className="bg-slate-900/80 p-5 rounded-xl h-96 overflow-hidden font-mono border border-white/10">
                   <div className="text-xs md:text-sm whitespace-pre-line leading-relaxed text-gray-200">
                     {resumeText}
                     <span className="inline-block w-2 h-4 bg-blue-500 ml-1 animate-pulse"></span>
@@ -242,62 +252,28 @@ export default function App() {
                 </div>
                 
                 <div className="mt-4 flex justify-between items-center">
-                  <span className="text-xs text-gray-400">Building ATS-friendly resume...</span>
+                  <span className="text-xs text-gray-300">Building ATS-friendly resume...</span>
                   <div className="flex space-x-1">
-                    <span className="text-xs text-gray-400">AI Powered</span>
+                    <span className="text-xs text-gray-300">AI Powered</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            {/* Floating Elements */}
-            <div className="absolute -top-6 -left-6 animate-float">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center shadow-lg">
-                <FileText className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            <div className="absolute -bottom-4 -right-4 animate-float delay-2000">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-16 px-8 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { value: '98%', label: 'Success Rate' },
-              { value: '50k+', label: 'Users Helped' },
-              { value: '2.5x', label: 'Faster Hiring' },
-              { value: '4.9/5', label: 'User Rating' }
-            ].map((stat, index) => (
-              <div 
-                key={index}
-                className="bg-black/20 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-blue-500/30 transition-all duration-500 transform hover:-translate-y-1"
-              >
-                <div className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  {stat.value}
-                </div>
-                <div className="text-gray-400 mt-2">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-8 relative">
+      <section id="features" className="py-20 px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div 
             className={`text-center mb-16 transition-all duration-1000 transform ${
               isVisible.features ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
           >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Sparkles className="w-5 h-5 text-yellow-400 mr-2" />
               <span className="text-blue-300">Why Choose CareerAlign</span>
             </div>
@@ -314,17 +290,17 @@ export default function App() {
             ].map((feature, index) => (
               <div 
                 key={index}
-                className={`group p-8 text-center rounded-3xl bg-black/20 backdrop-blur-md border border-white/10 hover:border-${feature.color}-500/30 transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden ${
+                className={`group p-8 text-center rounded-3xl bg-black/40 backdrop-blur-md border border-white/20 hover:border-${feature.color}-500/40 transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden ${
                   activeFeature === index ? `ring-2 ring-${feature.color}-500/50` : ''
                 }`}
                 onMouseEnter={() => setActiveFeature(index)}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className={`relative z-10 w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-${feature.color}-500 to-${feature.color}-700 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-${feature.color}-500/20 group-hover:scale-110 transition-all duration-300`}>
                   <feature.icon className="w-10 h-10 text-white" />
                 </div>
-                <h4 className="text-xl font-semibold mb-3 relative z-10">{feature.title}</h4>
-                <p className="text-gray-400 relative z-10">{feature.description}</p>
+                <h4 className="text-xl font-semibold mb-3 relative z-10 text-white">{feature.title}</h4>
+                <p className="text-gray-300 relative z-10">{feature.description}</p>
                 <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <button className="text-sm text-blue-400 flex items-center justify-center mx-auto">
                     Learn more <ArrowRight className="w-4 h-4 ml-1" />
@@ -337,14 +313,14 @@ export default function App() {
       </section>
 
       {/* Live Demo Section */}
-      <section id="demo" className="py-20 px-8 relative">
+      <section id="demo" className="py-20 px-8 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div 
             className={`text-center mb-16 transition-all duration-1000 transform ${
               isVisible.demo ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
           >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Zap className="w-5 h-5 text-yellow-400 mr-2" />
               <span className="text-blue-300">Interactive Demo</span>
             </div>
@@ -355,10 +331,10 @@ export default function App() {
           {/* Demo Container */}
           <div 
             ref={demoRef}
-            className="bg-black/20 backdrop-blur-xl rounded-3xl shadow-2xl p-8 relative overflow-hidden border border-white/10"
+            className="bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl p-8 relative overflow-hidden border border-white/20"
           >
             {/* Animated gradient border */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-75 blur"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-90 blur"></div>
             
             <div className="relative z-10">
               {/* Demo Steps Indicator */}
@@ -495,14 +471,14 @@ export default function App() {
       </section>
 
       {/* Workflow Section */}
-      <section id="workflow" className="py-20 px-8 relative">
+      <section id="workflow" className="py-20 px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div 
             className={`text-center mb-16 transition-all duration-1000 transform ${
               isVisible.workflow ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
           >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Target className="w-5 h-5 text-yellow-400 mr-2" />
               <span className="text-blue-300">Simple Process</span>
             </div>
@@ -539,10 +515,10 @@ export default function App() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 px-8 relative">
+      <section className="py-20 px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Heart className="w-5 h-5 text-pink-400 mr-2" />
               <span className="text-blue-300">Success Stories</span>
             </div>
@@ -558,16 +534,16 @@ export default function App() {
             ].map((testimonial, index) => (
               <div 
                 key={index}
-                className="bg-black/20 backdrop-blur-md rounded-3xl p-6 border border-white/10 hover:border-blue-500/30 transition-all duration-500 transform hover:-translate-y-1"
+                className="bg-black/50 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:border-blue-500/40 transition-all duration-500 transform hover:-translate-y-1"
               >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full mr-4"></div>
                   <div>
                     <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-400">{testimonial.role}</p>
+                    <p className="text-sm text-gray-300">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-gray-300 mb-4">"{testimonial.text}"</p>
+                <p className="text-gray-200 mb-4">"{testimonial.text}"</p>
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map(star => (
                     <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
@@ -580,27 +556,27 @@ export default function App() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-8 relative">
+      <section className="py-20 px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 rounded-3xl p-12 border border-white/10 backdrop-blur-md relative overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 rounded-3xl p-12 border border-white/20 backdrop-blur-md relative overflow-hidden">
             {/* Animated gradient border */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-75 blur"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-90 blur"></div>
             
             <div className="relative z-10">
               <h3 className="text-4xl font-bold mb-4">Ready to Transform Your Career?</h3>
-              <p className="text-xl mb-8 text-gray-300">Join thousands of professionals who found their perfect career path</p>
+              <p className="text-xl mb-8 text-gray-200">Join thousands of professionals who found their perfect career path</p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <button className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative px-8 py-4 bg-white text-slate-900 rounded-lg leading-none flex items-center font-semibold">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-90 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative px-8 py-4 bg-white text-slate-900 rounded-lg leading-none flex items-center font-semibold backdrop-blur-sm">
                     <span>Start Free Trial</span>
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                   </div>
                 </button>
                 <button className="relative group">
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative px-8 py-4 bg-black/70 ring-1 ring-white/10 rounded-lg leading-none flex items-center">
-                    <span className="text-blue-100 group-hover:text-white transition-colors duration-200">Schedule Demo</span>
+                  <div className="relative px-8 py-4 bg-black/80 ring-1 ring-white/20 rounded-lg leading-none flex items-center backdrop-blur-md">
+                    <span className="text-blue-100 group-hover:text-white transition-colors duration-200 font-medium">Schedule Demo</span>
                     <ChevronRight className="w-5 h-5 ml-2 text-blue-300 group-hover:translate-x-1 transition-transform duration-200" />
                   </div>
                 </button>
@@ -611,18 +587,18 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="py-16 bg-black/40 backdrop-blur-xl border-t border-white/10">
+      <footer id="contact" className="py-16 bg-black/60 backdrop-blur-xl border-t border-white/20 relative z-10">
         <div className="max-w-7xl mx-auto px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h4 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
                 CareerAlign
               </h4>
-              <p className="text-gray-400">AI-powered career alignment for the modern professional.</p>
+              <p className="text-gray-300">AI-powered career alignment for the modern professional.</p>
             </div>
             <div>
               <h5 className="font-semibold text-white mb-4">Product</h5>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-300">
                 <li><a href="#" className="hover:text-blue-300 transition-colors">Features</a></li>
                 <li><a href="#" className="hover:text-blue-300 transition-colors">Pricing</a></li>
                 <li><a href="#" className="hover:text-blue-300 transition-colors">API</a></li>
@@ -630,7 +606,7 @@ export default function App() {
             </div>
             <div>
               <h5 className="font-semibold text-white mb-4">Company</h5>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-gray-300">
                 <li><a href="#" className="hover:text-blue-300 transition-colors">About</a></li>
                 <li><a href="#" className="hover:text-blue-300 transition-colors">Careers</a></li>
                 <li><a href="#" className="hover:text-blue-300 transition-colors">Blog</a></li>
@@ -638,7 +614,7 @@ export default function App() {
             </div>
             <div>
               <h5 className="font-semibold text-white mb-4">Contact</h5>
-              <div className="space-y-2 text-gray-400">
+              <div className="space-y-2 text-gray-300">
                 <div className="flex items-center">
                   <Mail className="w-4 h-4 mr-2" />
                   <span>hello@careeralign.com</span>
@@ -650,7 +626,7 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 mt-12 pt-8 text-center text-gray-400">
+          <div className="border-t border-white/20 mt-12 pt-8 text-center text-gray-300">
             <p>© {new Date().getFullYear()} CareerAlign. All rights reserved.</p>
           </div>
         </div>
