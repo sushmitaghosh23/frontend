@@ -1,4 +1,4 @@
-import { FileText, Sparkles, GraduationCap, Briefcase, Upload, Search, BookOpen, Target, CheckCircle, TrendingUp, User, Mail, Phone, ArrowRight, Star, Award, Zap, Heart, ChevronRight } from "lucide-react";
+import { FileText, Sparkles, GraduationCap, Briefcase, Upload, Search, BookOpen, Target, CheckCircle, TrendingUp, User, Mail, Phone, ArrowRight, Star, Award, Zap, Heart, ChevronRight, Play, X, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 export default function App() {
@@ -9,6 +9,8 @@ export default function App() {
   const [typingIndex, setTypingIndex] = useState(0);
   const [typingStep, setTypingStep] = useState(0);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const demoRef = useRef(null);
 
   // Smooth scroll tracking
@@ -53,9 +55,9 @@ export default function App() {
       "JOHN SMITH\n\nFULL STACK ENGINEER\n\nSKILLS:\n• Node.js • Python • MongoDB\n• Express • React • AWS\n\nEXPERIENCE:\nSoftware Engineer at StartupCo (2019-2022)\n- Developed RESTful APIs\n- Implemented CI/CD pipelines\n\nEDUCATION:\nMS Software Engineering, MIT",
       "SARAH JOHNSON\n\nUX/UI DESIGNER\n\nSKILLS:\n• Figma • Adobe XD • Sketch\n• User Research • Wireframing\n• Prototyping • HTML/CSS\n\nEXPERIENCE:\nLead Designer at DesignStudio (2018-2021)\n- Created design systems\n- Conducted user testing\n\nEDUCATION:\nBFA Design, RISD"
     ];
-    
+
     const currentResume = resumeContent[typingStep];
-    
+
     if (typingIndex < currentResume.length) {
       const timer = setTimeout(() => {
         setResumeText(currentResume.substring(0, typingIndex + 1));
@@ -73,10 +75,10 @@ export default function App() {
     }
   }, [typingIndex, typingStep]);
 
-  // Vanta.js initialization
+  // Vanta.js initialization with custom parameters
   useEffect(() => {
     let vantaEffect;
-    
+
     const initVanta = () => {
       if (window.VANTA && window.THREE) {
         vantaEffect = window.VANTA.BIRDS({
@@ -88,17 +90,19 @@ export default function App() {
           minWidth: 200.00,
           scale: 1.00,
           scaleMobile: 1.00,
-          color1: 0x3b82f6, // Blue
-          color2: 0x8b5cf6, // Purple  
-          colorMode: "lerpGradient",
-          birdSize: 0.80,
-          wingSpan: 20.00,
-          speedLimit: 6.00,
-          separation: 25.00,
-          alignment: 18.00,
-          cohesion: 30.00,
-          quantity: 3.00,
-          backgroundAlpha: 0.0
+          // Custom parameters from the provided link
+          alignment: 25,
+          backgroundAlpha: 1,
+          backgroundColor: 0x394788, // Converted from 394788
+          birdSize: 0.9,
+          cohesion: 25,
+          color1: 0xCA2B6D, // Converted from 13248941
+          color2: 0xB0C1DE, // Converted from 11587390
+          colorMode: "lerp",
+          quantity: 4,
+          separation: 31,
+          speedLimit: 6,
+          wingSpan: 30
         });
       } else {
         // Retry after a short delay if libraries aren't loaded yet
@@ -148,14 +152,13 @@ export default function App() {
     <div className="min-h-screen bg-slate-900 text-white overflow-x-hidden">
       {/* Vanta.js Birds Background */}
       <div id="vanta-bg" className="fixed inset-0 z-0"></div>
-      
-      {/* Overlay for better text readability */}
-      <div className="fixed inset-0 bg-slate-900/40 z-0"></div>
+
+      {/* Gradient overlay for better text readability */}
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-900/90 z-0"></div>
 
       {/* Navbar */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrollY > 50 ? 'bg-black/60 backdrop-blur-xl shadow-2xl border-b border-white/20' : 'bg-black/40 backdrop-blur-md'
-      }`}>
+      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrollY > 50 ? 'bg-black/80 backdrop-blur-xl shadow-2xl border-b border-white/20' : 'bg-black/40 backdrop-blur-md'
+        }`}>
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <div className="flex items-center">
             <div className="relative">
@@ -165,17 +168,59 @@ export default function App() {
               </h1>
             </div>
           </div>
+
+          {/* Desktop Navigation */}
           <nav className="space-x-8 hidden md:flex">
-            <a href="#features" className="hover:text-blue-300 transition-all duration-300 hover:scale-105">Features</a>
-            <a href="#demo" className="hover:text-blue-300 transition-all duration-300 hover:scale-105">Demo</a>
-            <a href="#workflow" className="hover:text-blue-300 transition-all duration-300 hover:scale-105">How It Works</a>
-            <a href="#contact" className="hover:text-blue-300 transition-all duration-300 hover:scale-105">Contact</a>
+            <a href="#features" className="hover:text-blue-300 transition-all duration-300 hover:scale-105 group relative">
+              Features
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#demo" className="hover:text-blue-300 transition-all duration-300 hover:scale-105 group relative">
+              Demo
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#workflow" className="hover:text-blue-300 transition-all duration-300 hover:scale-105 group relative">
+              How It Works
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#contact" className="hover:text-blue-300 transition-all duration-300 hover:scale-105 group relative">
+              Contact
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+            </a>
           </nav>
-          <button className="relative group">
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden z-50 relative w-8 h-8 focus:outline-none"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <div className={`absolute w-8 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'}`}></div>
+            <div className={`absolute w-8 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}></div>
+            <div className={`absolute w-8 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 translate-y-0' : 'translate-y-2'}`}></div>
+          </button>
+
+          <button className="relative group hidden md:block">
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-90 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
             <div className="relative px-6 py-2 bg-black/90 ring-1 ring-gray-900/5 rounded-lg leading-none flex items-center backdrop-blur-md">
               <span className="text-blue-100 group-hover:text-white transition-colors duration-200">Login</span>
               <ArrowRight className="w-4 h-4 ml-2 text-blue-300 group-hover:translate-x-1 transition-transform duration-200" />
+            </div>
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`fixed inset-0 bg-slate-900/95 backdrop-blur-2xl z-40 flex flex-col items-center justify-center transition-all duration-500 md:hidden ${mobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}`}>
+          <nav className="flex flex-col items-center space-y-8 text-2xl">
+            <a href="#features" className="hover:text-blue-300 transition-all duration-300" onClick={() => setMobileMenuOpen(false)}>Features</a>
+            <a href="#demo" className="hover:text-blue-300 transition-all duration-300" onClick={() => setMobileMenuOpen(false)}>Demo</a>
+            <a href="#workflow" className="hover:text-blue-300 transition-all duration-300" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
+            <a href="#contact" className="hover:text-blue-300 transition-all duration-300" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+          </nav>
+          <button className="mt-12 relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-90 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative px-8 py-3 bg-black/90 ring-1 ring-gray-900/5 rounded-lg leading-none flex items-center backdrop-blur-md">
+              <span className="text-blue-100 group-hover:text-white transition-colors duration-200 text-lg">Get Started</span>
+              <ArrowRight className="w-5 h-5 ml-2 text-blue-300 group-hover:translate-x-1 transition-transform duration-200" />
             </div>
           </button>
         </div>
@@ -185,21 +230,23 @@ export default function App() {
       <section className="relative pt-32 pb-20 px-6 z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Side - Intro Content */}
-          <div 
+          <div
             className="transform transition-all duration-1000 ease-out z-10"
             style={{ transform: `translateY(${parallaxOffset * 0.1}px)` }}
           >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
-              <Zap className="w-5 h-5 text-yellow-400 mr-2 animate-pulse" />
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md animate-pulse">
+              <Zap className="w-5 h-5 text-yellow-400 mr-2" />
               <span className="text-blue-300">AI-Powered Career Platform</span>
               <div className="ml-2 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
             </div>
-            
+
             <h2 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
               Transform Your{" "}
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Career Path
               </span>
+              <br />
+              <span className="text-3xl md:text-4xl text-gray-300 mt-4 block">with AI-Powered Precision</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 opacity-90">
               Discover your perfect career match, bridge skill gaps with AI-powered learning, and land your dream job.
@@ -212,14 +259,28 @@ export default function App() {
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                 </div>
               </button>
-              
-              <button className="relative group">
+
+              <button className="relative group flex items-center">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative px-8 py-4 bg-black/80 ring-1 ring-white/20 rounded-lg leading-none flex items-center backdrop-blur-md">
+                <div className="relative px-6 py-4 bg-black/80 ring-1 ring-white/20 rounded-lg leading-none flex items-center backdrop-blur-md">
+                  <div className="w-5 h-5 mr-2 bg-white rounded-full flex items-center justify-center">
+                    <Play className="w-3 h-3 text-black fill-current ml-0.5" />
+                  </div>
                   <span className="text-blue-100 group-hover:text-white transition-colors duration-200 font-medium">Watch Demo</span>
-                  <ChevronRight className="w-5 h-5 ml-2 text-blue-300 group-hover:translate-x-1 transition-transform duration-200" />
                 </div>
               </button>
+            </div>
+
+            <div className="mt-12 flex items-center space-x-6">
+              <div className="flex -space-x-4">
+                {[1, 2, 3].map((item) => (
+                  <div key={item} className="w-12 h-12 rounded-full border-2 border-slate-900 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+                ))}
+              </div>
+              <div className="text-sm text-gray-300">
+                <p className="font-semibold">Join 10,000+ professionals</p>
+                <p className="text-xs">who transformed their careers</p>
+              </div>
             </div>
           </div>
 
@@ -228,9 +289,9 @@ export default function App() {
             <div className="bg-black/40 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 border border-white/20 transform hover:scale-[1.02] transition-transform duration-500 relative overflow-hidden">
               {/* Animated border */}
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-90 blur"></div>
-              
+
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
-              
+
               <div className="relative z-10">
                 <div className="flex items-center mb-4">
                   <div className="flex space-x-2">
@@ -243,14 +304,14 @@ export default function App() {
                   </div>
                   <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
                 </div>
-                
+
                 <div className="bg-slate-900/80 p-5 rounded-xl h-96 overflow-hidden font-mono border border-white/10">
                   <div className="text-xs md:text-sm whitespace-pre-line leading-relaxed text-gray-200">
                     {resumeText}
                     <span className="inline-block w-2 h-4 bg-blue-500 ml-1 animate-pulse"></span>
                   </div>
                 </div>
-                
+
                 <div className="mt-4 flex justify-between items-center">
                   <span className="text-xs text-gray-300">Building ATS-friendly resume...</span>
                   <div className="flex space-x-1">
@@ -259,8 +320,10 @@ export default function App() {
                 </div>
               </div>
             </div>
-            
 
+            {/* Floating elements around the resume builder */}
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/20 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-purple-500/20 rounded-full blur-xl animate-pulse delay-1000"></div>
           </div>
         </div>
       </section>
@@ -268,10 +331,9 @@ export default function App() {
       {/* Features Section */}
       <section id="features" className="py-20 px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div 
-            className={`text-center mb-16 transition-all duration-1000 transform ${
-              isVisible.features ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`}
+          <div
+            className={`text-center mb-16 transition-all duration-1000 transform ${isVisible.features ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
           >
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Sparkles className="w-5 h-5 text-yellow-400 mr-2" />
@@ -280,7 +342,7 @@ export default function App() {
             <h3 className="text-4xl font-bold mb-4">Powerful Features</h3>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">Everything you need to transform your career journey with AI-powered precision</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { icon: FileText, title: "Resume Analysis", description: "AI scans your resume & gives personalized insights.", color: "blue" },
@@ -288,11 +350,10 @@ export default function App() {
               { icon: GraduationCap, title: "Learning Path", description: "Get curated learning resources to boost your profile.", color: "green" },
               { icon: Briefcase, title: "Job Opportunities", description: "Discover job listings that match your skills & goals.", color: "pink" }
             ].map((feature, index) => (
-              <div 
+              <div
                 key={index}
-                className={`group p-8 text-center rounded-3xl bg-black/40 backdrop-blur-md border border-white/20 hover:border-${feature.color}-500/40 transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden ${
-                  activeFeature === index ? `ring-2 ring-${feature.color}-500/50` : ''
-                }`}
+                className={`group p-8 text-center rounded-3xl bg-black/40 backdrop-blur-md border border-white/20 hover:border-${feature.color}-500/40 transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden ${activeFeature === index ? `ring-2 ring-${feature.color}-500/50` : ''
+                  }`}
                 onMouseEnter={() => setActiveFeature(index)}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -312,13 +373,37 @@ export default function App() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 px-8 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { value: "98%", label: "Success Rate", icon: Award },
+              { value: "10K+", label: "Users", icon: User },
+              { value: "5K+", label: "Jobs Found", icon: Briefcase },
+              { value: "2.5x", label: "Interview Rate", icon: TrendingUp }
+            ].map((stat, index) => (
+              <div
+                key={index}
+                className="text-center p-6 rounded-3xl bg-black/40 backdrop-blur-md border border-white/20 hover:border-blue-500/40 transition-all duration-500 transform hover:-translate-y-1"
+              >
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                  <stat.icon className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">{stat.value}</div>
+                <div className="text-gray-300">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Live Demo Section */}
       <section id="demo" className="py-20 px-8 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div 
-            className={`text-center mb-16 transition-all duration-1000 transform ${
-              isVisible.demo ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`}
+          <div
+            className={`text-center mb-16 transition-all duration-1000 transform ${isVisible.demo ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
           >
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Zap className="w-5 h-5 text-yellow-400 mr-2" />
@@ -329,13 +414,13 @@ export default function App() {
           </div>
 
           {/* Demo Container */}
-          <div 
+          <div
             ref={demoRef}
             className="bg-black/50 backdrop-blur-xl rounded-3xl shadow-2xl p-8 relative overflow-hidden border border-white/20"
           >
             {/* Animated gradient border */}
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-90 blur"></div>
-            
+
             <div className="relative z-10">
               {/* Demo Steps Indicator */}
               <div className="flex justify-center mb-8">
@@ -343,9 +428,8 @@ export default function App() {
                   {[0, 1, 2, 3, 4].map((step) => (
                     <div
                       key={step}
-                      className={`w-3 h-3 rounded-full transition-all duration-500 ${
-                        demoStep === step ? 'bg-blue-400 scale-125' : 'bg-gray-600'
-                      }`}
+                      className={`w-3 h-3 rounded-full transition-all duration-500 ${demoStep === step ? 'bg-blue-400 scale-125' : 'bg-gray-600'
+                        }`}
                     />
                   ))}
                 </div>
@@ -473,10 +557,9 @@ export default function App() {
       {/* Workflow Section */}
       <section id="workflow" className="py-20 px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div 
-            className={`text-center mb-16 transition-all duration-1000 transform ${
-              isVisible.workflow ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`}
+          <div
+            className={`text-center mb-16 transition-all duration-1000 transform ${isVisible.workflow ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
           >
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 mb-6 backdrop-blur-md">
               <Target className="w-5 h-5 text-yellow-400 mr-2" />
@@ -485,7 +568,7 @@ export default function App() {
             <h3 className="text-4xl font-bold mb-4">How It Works</h3>
             <p className="text-xl text-gray-300">Simple steps to career success</p>
           </div>
-          
+
           <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
             {[
               { icon: Upload, title: "Upload Resume", description: "Share your current resume securely" },
@@ -525,19 +608,21 @@ export default function App() {
             <h3 className="text-4xl font-bold mb-4">What Our Users Say</h3>
             <p className="text-xl text-gray-300">Join thousands of professionals who transformed their careers</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { name: "Sarah Johnson", role: "Software Engineer", text: "CareerAlign helped me identify the exact skills I was missing and provided a clear path to learn them. Landed my dream job in 3 months!", avatar: "/avatar1.jpg" },
               { name: "Michael Chen", role: "Product Manager", text: "The resume analysis was incredibly accurate. I went from getting no callbacks to multiple interviews per week after implementing the suggestions.", avatar: "/avatar2.jpg" },
               { name: "Jessica Williams", role: "UX Designer", text: "The personalized learning recommendations saved me countless hours. I was able to focus on exactly what mattered for my career goals.", avatar: "/avatar3.jpg" }
             ].map((testimonial, index) => (
-              <div 
+              <div
                 key={index}
                 className="bg-black/50 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:border-blue-500/40 transition-all duration-500 transform hover:-translate-y-1"
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full mr-4"></div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full mr-4 flex items-center justify-center text-white font-bold">
+                    {testimonial.name.charAt(0)}
+                  </div>
                   <div>
                     <h4 className="font-semibold text-white">{testimonial.name}</h4>
                     <p className="text-sm text-gray-300">{testimonial.role}</p>
@@ -561,7 +646,7 @@ export default function App() {
           <div className="bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 rounded-3xl p-12 border border-white/20 backdrop-blur-md relative overflow-hidden">
             {/* Animated gradient border */}
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-90 blur"></div>
-            
+
             <div className="relative z-10">
               <h3 className="text-4xl font-bold mb-4">Ready to Transform Your Career?</h3>
               <p className="text-xl mb-8 text-gray-200">Join thousands of professionals who found their perfect career path</p>
@@ -595,6 +680,17 @@ export default function App() {
                 CareerAlign
               </h4>
               <p className="text-gray-300">AI-powered career alignment for the modern professional.</p>
+              <div className="flex space-x-4 mt-4">
+                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-blue-500/30">
+                  <div className="w-4 h-4 bg-twitter bg-center bg-cover"></div>
+                </div>
+                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-blue-500/30">
+                  <div className="w-4 h-4 bg-linkedin bg-center bg-cover"></div>
+                </div>
+                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-blue-500/30">
+                  <div className="w-4 h-4 bg-instagram bg-center bg-cover"></div>
+                </div>
+              </div>
             </div>
             <div>
               <h5 className="font-semibold text-white mb-4">Product</h5>
